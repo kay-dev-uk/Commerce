@@ -1,0 +1,106 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+<ul style="list-style: none; text-align: center;">
+    {% comment %} Winner message {% endcomment %}
+    {% if user == listing.winner %}
+    {% if user != listing.creator %}
+    <h3 style="color: green;">Congratulations! You won this item</h3>
+    {% endif %}
+    {% endif %}
+
+    {% if listing.winner_creator %}
+    <h3 style="color: green;">Congratulations! You won this item</h3>
+    {% endif %}
+
+    {% comment %} Close Listing {% endcomment %}
+    {% if user == listing.creator %}
+    {% if listing.active %}
+        <form method="POST">
+            {% csrf_token %}
+            <input style="margin-bottom: 5px;" type="submit" value="Close Listing" name="close_listing">
+        </form>
+    {% endif %}
+    {% endif %}
+
+    {% if closing_error %}
+    <li>Unfortunately, no one bade on this item, you got to keep it</li>
+    {% endif %}
+    
+    {% comment %} Add Watchlist {% endcomment %}
+    {% if user.is_authenticated %}
+    {% if listing.active %}
+    {% if not watchlist %}
+        <form method="POST">
+            {% csrf_token %}
+            <input type="submit" value="Add to Watchlist" name="add_to_watchlist">
+        </form>
+    {% endif %}
+    {% endif %}
+    {% endif %}
+
+    {% if watchlist %}
+    <form method="POST">
+        {% csrf_token %}
+        <input type="submit" value="Remove from Watchlist" name="remove_from_watchlist">
+    </form>
+    {% endif %}
+
+
+    {% comment %} Listing {% endcomment %}
+
+    <li><i>Listing created by {{ listing.creator}}</i></li>
+    <li>Title: {{ listing.title }}</li>
+    {% if listing.url %}
+    <li><img style="height:300px; weight:300px;" src={{ listing.url }}></li>
+    {% else %}
+    <li>No pictures attached</li>
+    {% endif %}
+    <li>Description: {{ listing.description }}</li>
+    <li>Price: {{ listing.price }}£</li>
+    <hr>
+
+    {% comment %} Bid Section {% endcomment %}
+    {% for bid in bids %}
+    <li>{{ bid.bidder }} bade {{ bid.bid }}</li>
+    {% endfor %}
+
+    {% comment %} Bidding Form {% endcomment %}
+    {% if error_message %}
+    <p style="color: red;">Error: Your bid is too low!<p>
+    {% endif %}
+
+    {% if listing.active %}
+    {% if user.is_authenticated %}
+    <form method="POST">
+        {{ bidding_form }}
+        {% csrf_token %}
+        <input type="submit" value="Bid" name="submit_bid">
+    </form>
+    {% endif %}
+    {% else %}
+    <li>Item won by {{ listing.winner }}</li>
+    <li style="color: red;">Listing is not active, bidding is not available</li>
+    {% endif %}
+
+    {% comment %} Comment Section {% endcomment %}
+    {% if comments %}
+    Comments:
+    {% for comment in comments %}
+    <li>{{ comment }}</li>
+    {% endfor %}
+    {% else %}
+    No comments yet
+    {% endif %}
+
+    {% comment %} Comment area + Submit button {% endcomment %}
+    {% if user.is_authenticated %}
+    <form method="POST">
+        {{ comment_form }}
+        {% csrf_token %}
+        <input type="submit" value="Submit" name="submit_comment">
+    </form>
+    {% endif %}
+
+</ul>
+{% endblock %}

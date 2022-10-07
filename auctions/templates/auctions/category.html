@@ -1,0 +1,25 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+    <ul style="list-style: none;">
+    {% if listings %}
+    {% for listing in listings %}
+    <hr>
+    <li><a href="/{{listing.id}}">Title: {{ listing.title }}</a></li>
+    <li>{{ listing.category }}</li>
+    {% if listing.url %}
+    <li><img style="width: 100px; heigh: 100px;" src={{ listing.url }}></li>
+    {% else %}
+    <li>No pictures attached</li>
+    {% endif %}
+    <li>Description: {{ listing.description }}</li>
+    <li>Price: {{ listing.price }}£</li>
+    <li>Listing created by {{ listing.creator}}</li>
+    <hr>
+    {% endfor %}
+    {% else %}
+    No listings in this category yet
+    {% endif %}
+    </ul>
+{% endblock %}

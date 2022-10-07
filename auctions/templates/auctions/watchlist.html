@@ -1,0 +1,25 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+<ul style="list-style: none;">
+    {% if watchlist_items %}
+    {% for item in watchlist_items %}
+        <hr>
+        <li><a href={{item.listing.id}}>Title: {{ item.listing.title }}</a></li>
+        <li>{{ item.listing.category }}</li>
+        {% if item.listing.url %}
+        <li><img style="width: 100px; heigh: 100px;" src={{ item.listing.url }}></li>
+        {% else %}
+        <li>No pictures attached</li>
+        {% endif %}
+        <li>Description: {{ item.listing.description }}</li>
+        <li>Price: {{ item.listing.price }}£</li>
+        <li>Listing created by {{ item.listing.creator}}</li>
+        <hr>
+    {% endfor %}
+    {% else %}
+    <li>Nothing here yet</li>
+    {% endif %}
+</ul>
+{% endblock %}
